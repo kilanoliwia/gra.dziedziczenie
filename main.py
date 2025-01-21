@@ -300,7 +300,19 @@ class Game:
             screen.fill(white)
             self.board.draw(screen)
             pygame.display.flip()
+        self.game_over_popup()
 
+    def game_over_popup(self):
+        result = self.board.show_simple_popup(screen, "Chcesz zakończyć gre?")
+        if result == "continue":
+            print("Kontynuujemy grę")
+        elif result == "exit":
+            print("Koniec gry.")
+            pygame.quit()
+            sys.exit()
+
+        pygame.quit()
+        sys.exit()
 
         pygame.quit()
         sys.exit()
