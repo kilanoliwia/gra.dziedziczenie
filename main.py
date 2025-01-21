@@ -211,6 +211,68 @@ class Board:
             return True
         return False
 
+    def show_simple_popup(screen, winner_text):
+        popup_width, popup_height = 300, 150
+        popup_color = (236, 109, 170)
+        shadow_color = (236, 211, 225)
+        text_color = (255, 255, 255)
+        button_color = (255, 176, 225)
+        button_hover_color = (250, 221, 225)
+        button_text_color = (255, 255, 255)
+        button_shadow_color = (250, 221, 225)
+
+        # rozmieszczenie okienka
+        popup_x = (screen.get_width() - popup_width) // 2
+        popup_y = (screen.get_height() - popup_height) // 2
+
+        # przycisk kontynuuj
+        continue_button_rect = pygame.Rect(popup_x + 30, popup_y + 80, 100, 40)
+        # przycisk zakoncz
+        exit_button_rect = pygame.Rect(popup_x + 170, popup_y + 80, 100, 40)
+
+        font = pygame.font.Font(None, 36)
+        button_font = pygame.font.Font(None, 28)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return "exit"
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if continue_button_rect.collidepoint(event.pos):
+                        return "continue"
+                    elif exit_button_rect.collidepoint(event.pos):
+                        return "exit"
+
+            pygame.draw.rect(screen, shadow_color, (popup_x + 5, popup_y + 5, popup_width, popup_height))
+
+            # rysowanie popupu
+            pygame.draw.rect(screen, popup_color, (popup_x, popup_y, popup_width, popup_height))
+            pygame.draw.rect(screen, (0, 0, 0), (popup_x, popup_y, popup_width, popup_height), 2)
+            # tekst zwycięzcy
+            text_surface = font.render(winner_text, True, text_color)
+            text_rect = text_surface.get_rect(center=(popup_x + popup_width // 2, popup_y + 40))
+            screen.blit(text_surface, text_rect)
+
+            pygame.draw.rect(screen, button_shadow_color, continue_button_rect.move(3, 3))
+            # kontynuuj przycisk
+            mouse_pos = pygame.mouse.get_pos()
+            continue_color = button_hover_color if continue_button_rect.collidepoint(mouse_pos) else button_color
+            pygame.draw.rect(screen, continue_color, continue_button_rect)
+            continue_text = button_font.render("Kontynuuj", True, button_text_color)
+            continue_text_rect = continue_text.get_rect(center=continue_button_rect.center)
+            screen.blit(continue_text, continue_text_rect)
+
+            pygame.draw.rect(screen, button_shadow_color, exit_button_rect.move(3, 3))
+
+            exit_color = button_hover_color if exit_button_rect.collidepoint(mouse_pos) else button_color
+            pygame.draw.rect(screen, exit_color, exit_button_rect)
+            exit_text = button_font.render("Zakończ", True, button_text_color)
+            exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
+            screen.blit(exit_text, exit_text_rect)
+
+            pygame.display.flip()
+
+
 def get_row_col_from_mouse(pos): #konwertuje pozycje myszy na indeksy planszy
     x, y = pos
     row = y // square_size
@@ -235,7 +297,13 @@ def main():
         screen.fill(white)
         board.draw(screen)
         pygame.display.flip()
-
+    result = Board.show_simple_popup(screen, "Koniec gry?")
+    if result == "continue":
+        print("Kontynuujemy grę")
+    elif result == "exit":
+        print("Koniec gry.")
+        pygame.quit()
+        sys.exit()
     pygame.quit()
     sys.exit()
 
