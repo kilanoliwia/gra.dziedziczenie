@@ -211,7 +211,7 @@ class Board:
             return True
         return False
 
-    def show_simple_popup(screen, winner_text):
+    def show_simple_popup(self, screen, winner_text):
         popup_width, popup_height = 300, 150
         popup_color = (236, 109, 170)
         shadow_color = (236, 211, 225)
@@ -280,32 +280,31 @@ def get_row_col_from_mouse(pos): #konwertuje pozycje myszy na indeksy planszy
     return row, col
 
 
-def main():
-    running = True
-    board = Board()
+class Game:
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    def __init__(self):
+        self.board = Board()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                row, col = get_row_col_from_mouse(pos)
-                board.select(row, col)
 
-        screen.fill(white)
-        board.draw(screen)
-        pygame.display.flip()
-    result = Board.show_simple_popup(screen, "Koniec gry?")
-    if result == "continue":
-        print("Kontynuujemy grę")
-    elif result == "exit":
-        print("Koniec gry.")
+    def run(self):
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    row, col = get_row_col_from_mouse(pos)
+                    self.board.select(row, col)
+            screen.fill(white)
+            self.board.draw(screen)
+            pygame.display.flip()
+
+
         pygame.quit()
         sys.exit()
-    pygame.quit()
-    sys.exit()
 
 if __name__ == '__main__':
-    main()
+    game = Game()
+    game.run()
